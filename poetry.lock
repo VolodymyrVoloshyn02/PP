@@ -56,6 +56,14 @@ optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 
 [[package]]
+name = "mod-wsgi"
+version = "4.7.1"
+description = "Installer for Apache/mod_wsgi."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "werkzeug"
 version = "1.0.1"
 description = "The comprehensive WSGI web application library."
@@ -70,7 +78,7 @@ watchdog = ["watchdog"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "d0a0574f8524d10469c91514ad5396c41b614d8b22e137053fcce87c85718ff7"
+content-hash = "43484d61e6eb0179a535dd0d7b311751367fcb7d87ffad717e9b863732df4033"
 
 [metadata.files]
 click = [
@@ -123,6 +131,9 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1-cp38-cp38-win32.whl", hash = "sha256:596510de112c685489095da617b5bcbbac7dd6384aeebeda4df6025d0256a81b"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:e8313f01ba26fbbe36c7be1966a7b7424942f670f38e666995b88d012765b9be"},
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
+]
+mod-wsgi = [
+    {file = "mod_wsgi-4.7.1.tar.gz", hash = "sha256:eaeadc28d06ea42fa565c02b83504074ac558fca27f059e12bc5684d660e3cce"},
 ]
 werkzeug = [
     {file = "Werkzeug-1.0.1-py2.py3-none-any.whl", hash = "sha256:2de2a5db0baeae7b2d2664949077c2ac63fbd16d98da0ff71837f7d1dea3fd43"},
