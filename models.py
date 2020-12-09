@@ -33,8 +33,9 @@ class Credits(Base):
     start_date = Column('start_date',String)
     end_date = Column('end_date', String)
     start_sum = Column('start_sum', Integer)
-    current_sum = Column('current_sum', Integer, unique=True)
+    current_sum = Column('current_sum', Integer)
     bank_id = Column('bank_id', Integer, ForeignKey(Banks.id))
+    user_id = Column('user_id', Integer, ForeignKey(Users.id))
 
 
 class Transactions(Base):

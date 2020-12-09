@@ -3,7 +3,7 @@ CREATE TABLE users (
     name VARCHAR NOT NULL,
     passport VARCHAR NOT NULL,
     address VARCHAR NOT NULL,
-    email VARCHAR(100) NOT NULL,
+    email VARCHAR(100) ,
     phone_number VARCHAR(20) NOT NULL,
     money_amount INT NOT NULL,
     PRIMARY KEY (id)
@@ -24,6 +24,8 @@ CREATE TABLE credits (
     current_sum INT NOT NULL,
     bank_id INT NOT NULL,
     FOREIGN KEY (bank_id) REFERENCES banks(id),
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
     PRIMARY KEY (id)
 );
 
@@ -36,8 +38,3 @@ CREATE TABLE transactions (
     PRIMARY KEY (id)
 );
 
-
---
--- insert into users(name, passport, address, email, phone_number) values ('user', 'NZ55875', 'Lviv,Geroiv UPA,45/17', 'example@gmail.com', '0983485535');
--- insert into banks(per_cent) values (20);
--- insert into credits(start_date, end_date) values ('2020-08-30 11:14:33', '2021-08-30 11:14:33');
