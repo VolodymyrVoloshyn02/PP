@@ -1,3 +1,11 @@
+from flask import Flask
+from flask_restful import Resource, Api
+
+from flask_jwt_extended import JWTManager
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+#from controler import *
 from flask import json, Response, request, jsonify
 from flask_restful import Resource, Api
 from models import *
@@ -7,7 +15,7 @@ from sqlalchemy.ext.declarative import DeclarativeMeta
 
 
 
-from main import session
+#from app import session
 
 class AlchemyEncoder(json.JSONEncoder):
 
@@ -45,7 +53,6 @@ class AddUser(Resource):
             session.add(user)
             session.flush()
             session.commit()
-            token = user.get_token()
             return Response(
                 response=json.dumps({"message": "Success"}),
                 status=200,
@@ -54,18 +61,20 @@ class AddUser(Resource):
         except:
             return Response(
                 response=json.dumps({"message": "Invalid input"}),
-                status=405,
+                status=400,
                 mimetype="application/json"
             )
+
+
 
 class Login(Resource):
     def post(self):
         data = request.json
         user = Users.authenticate(**data)
         token = user.get_token()
-        return {'access_token': token}
+        return jsonify({'access_token': token})
 
-    #jsonify({'access_token': token})
+
 
 class GetUser(Resource):
     @jwt_required
@@ -82,7 +91,7 @@ class GetUser(Resource):
         if user:
             return Response(
                 response=json.dumps(user, cls=AlchemyEncoder),
-                status=201,
+                status=200,
                 mimetype="application/json"
             )
         return Response(
@@ -145,7 +154,7 @@ class UpdateUser(Resource):
         except Exception as e:
             return Response(
                 response=json.dumps({"message": "Invalid input"}),
-                status=405,
+                status=400,
                 mimetype="application/json"
             )
 
@@ -159,7 +168,7 @@ class AddBank(Resource):
         if checkuser.status != "admin":
             return Response(
                 response=json.dumps({"message": "Not allowed for users"}),
-                status=400,
+                status=401,
                 mimetype="application/json"
             )
         try:
@@ -174,7 +183,7 @@ class AddBank(Resource):
         except:
             return Response(
                 response=json.dumps({"message": "Invalid input"}),
-                status=405,
+                status=400,
                 mimetype="application/json"
             )
 
@@ -237,7 +246,7 @@ class UpdateCredit(Resource):
         if checkuser.status == "admin":
             return Response(
                 response=json.dumps({"message": "Not allowed for admins"}),
-                status=400,
+                status=401,
                 mimetype="application/json"
             )
         try:
@@ -319,3 +328,78 @@ class GetTransaction(Resource):
                 status=400,
                 mimetype="application/json"
             )
+app = Flask(__name__)
+api = Api(app)
+
+app.config['JWT_SECRET_KEY'] = 'qwejhfloimslvuywdkkvuhssss'
+jwt = JWTManager(app)
+engine = create_engine('postgresql://postgres:1111@localhost/mydb', echo=True)
+
+Base.metadata.create_all(engine)
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+
+
+api.add_resource(AddUser, '/user')
+api.add_resource(Login, '/login')
+api.add_resource(GetUser, '/user/<int:id>')
+api.add_resource(GetMyself, '/user')
+api.add_resource(UpdateUser, '/user')
+
+api.add_resource(AddBank, '/bank')
+api.add_resource(GetBank, '/bank/<int:id>')
+
+api.add_resource(AddCredit, '/user/credit')
+api.add_resource(UpdateCredit, '/user/credit/<int:credit_id>')
+api.add_resource(GetCredit, '/user/credit/<int:credit_id>')
+
+api.add_resource(AddTransaction, '/user/credit/<int:credit_id>/transaction')
+api.add_resource(GetTransaction, '/user/credit/<int:credit_id>/transaction/<int:transaction_id>')
+if __name__ == "__main__":
+    app.run(debug=True)
+
+"""{
+   "username":"Vovik",
+   "first_name":"Vova",
+   "last_name":"Putin",
+   "phone":"09348124",
+   "email":"putin@gmail.com",
+   "password":"123"
+}"""
+
+
+''' 
+add bank
+{
+  "all_money": 500000,
+  "per_cent" : 30
+}
+add user
+{
+    "login": "mylogin",
+    "password": "my password",
+    "name": "myname",
+    "passport": "myUKRpasport",
+    "address": "Lviv",
+    "email": "user@gmail.com",
+    "phone_number": "88005553535"
+    "status": ""
+}
+add credit
+{
+    "start_date": "21.01.2020",
+    "end_date": "21.01.2021",
+    "start_sum": 1000,
+    "current_sum": 100,
+    "bank_id": 1,
+    "user_id": 1
+}
+add transaction
+{
+    "date": "17.12.2020",
+    "summ": 200
+}
+
+'''

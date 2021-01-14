@@ -1,16 +1,53 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, MetaData, ForeignKeyConstraint
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.engine import reflection, create_engine
 from sqlalchemy.orm import sessionmaker
 from datetime import timedelta
-
+from sqlalchemy.schema import (
+        MetaData,
+        Table,
+        DropTable,
+        ForeignKeyConstraint,
+        DropConstraint,
+        )
 from flask_jwt_extended import create_access_token
+
 from werkzeug.security import check_password_hash
-# engine = create_engine("postgresql://postgres:1111@localhost/mydb", echo=True)
+engine = create_engine("postgresql://postgres:1111@localhost/mydb", echo=True)
 
 # Session = sessionmaker(bind=engine)
+#from app import engine
 
 Base = declarative_base()
 
+# def db_DropEverything(Base):
+#     conn = engine
+#     trans = conn.begin()
+#     inspector = reflection.Inspector.from_engine(engine)
+#     metadata = MetaData()
+#
+#     tbs = []
+#     all_fks = []
+#
+#     for table_name in inspector.get_table_names():
+#         fks = []
+#         for fk in inspector.get_foreign_keys(table_name):
+#             if not fk['name']:
+#                 continue
+#             fks.append(
+#                 ForeignKeyConstraint((),(),name=fk['name'])
+#                 )
+#         t = Table(table_name,metadata,*fks)
+#         tbs.append(t)
+#         all_fks.extend(fks)
+#
+#     for fkc in all_fks:
+#         conn.execute(DropConstraint(fkc))
+#
+#     for table in tbs:
+#         conn.execute(DropTable(table))
+#
+#     #trans.commit()
 
 class Users(Base):
     __tablename__ = 'users'
@@ -39,9 +76,10 @@ class Users(Base):
         token = create_access_token(identity=self.id, expires_delta=expire_delta)
         return token
 
+
     @classmethod
     def authenticate(cls, login, password):
-        from app import session
+        from main import session
         user = session.query(cls).filter(cls.login == login).one()
         if not check_password_hash(user.password, password):
             raise Exception('No user with this password')
